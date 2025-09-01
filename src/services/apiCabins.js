@@ -20,3 +20,17 @@ export async function deleteCabin(id) {
     throw new Error(`Error deleting cabin: ${error.message}`);
   }
 }
+
+export async function createCabin(newCabin) {
+  const { data, error } = await supabase
+    .from("cabins")
+    .insert([newCabin])
+    .select();
+
+  if (error) {
+    console.error("Error creating cabin:", error);
+    throw new Error(`Error creating cabin: ${error.message}`);
+  }
+
+  return data;
+}

@@ -73,7 +73,7 @@ function CabinRow({ cabin }) {
       </div>
       <Price>{formatCurrency(regularPrice)}</Price>
       <Discount>{formatCurrency(discount)}</Discount>
-      <button onClick={() => mutate(cabin.id)} disabled={isDeleting}>
+      <button onClick={() => mutate(cabinId)} disabled={isDeleting}>
         Delete
       </button>
     </TableRow>
