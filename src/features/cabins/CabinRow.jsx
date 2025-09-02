@@ -1,8 +1,9 @@
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useState } from "react";
 import toast from "react-hot-toast";
 import styled from "styled-components";
-import { deleteCabin } from "../../services/apiCabins";
 import { formatCurrency } from "../../utils/helpers";
+import CreateCabinForm from "./CreateCabinForm";
+import { useDeletingCabin } from "./useDeletingCabin";
 
 const TableRow = styled.div`
   display: grid;
@@ -42,7 +43,61 @@ const Discount = styled.div`
   font-weight: 500;
   color: var(--color-green-700);
 `;
+
+const ButtonGroup = styled.div`
+  display: flex;
+  gap: 0.8rem;
+`;
+
+const Button = styled.button`
+  padding: 0.8rem 1.2rem;
+  border: none;
+  border-radius: 4px;
+  font-size: 1.2rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+
+  &:hover {
+    opacity: 0.8;
+  }
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+`;
+
+const EditButton = styled(Button)`
+  background-color: var(--color-blue-100);
+  color: var(--color-blue-700);
+
+  &:hover {
+    background-color: var(--color-blue-200);
+  }
+`;
+
+const DeleteButton = styled(Button)`
+  background-color: var(--color-red-100);
+  color: var(--color-red-700);
+
+  &:hover {
+    background-color: var(--color-red-200);
+  }
+`;
+
 function CabinRow({ cabin }) {
+  const [showForm, setShowForm] = useState(false);
+
+  // Move hooks BEFORE any conditional returns
+  const { isDeleting, deleteCabin } = useDeletingCabin();
+
+  // Add safety check for cabin prop AFTER hooks
+  if (!cabin) {
+    console.error("CabinRow: cabin prop is required");
+    return null;
+  }
+
   const {
     id: cabinId,
     name,
@@ -52,31 +107,52 @@ function CabinRow({ cabin }) {
     image,
   } = cabin;
 
-  const queryClient = useQueryClient();
-  const { isLoading: isDeleting, mutate } = useMutation({
-    mutationFn: deleteCabin,
-    onSuccess: () => {
-      toast.success("Cabin deleted successfully");
-      // Invalidate and refetch the cabins query
-      queryClient.invalidateQueries({ queryKey: ["cabins"] });
-    },
-    onError: (error) => {
-      toast.error(`Error deleting cabin: ${error.message}`);
-    },
-  });
+  const handleDelete = () => {
+    if (!cabinId) {
+      toast.error("Cannot delete cabin: Invalid cabin ID");
+      return;
+    }
+
+    if (window.confirm(`Are you sure you want to delete "${name}"?`)) {
+      deleteCabin(cabinId);
+    }
+  };
+
+  const handleEdit = () => {
+    setShowForm((prev) => !prev);
+  };
+
   return (
-    <TableRow role="row">
-      <Img src={image} alt={name} />
-      <Cabin>{name}</Cabin>
-      <div>
-        Fit up to <strong>{maxCapacity}</strong>
-      </div>
-      <Price>{formatCurrency(regularPrice)}</Price>
-      <Discount>{formatCurrency(discount)}</Discount>
-      <button onClick={() => mutate(cabinId)} disabled={isDeleting}>
-        Delete
-      </button>
-    </TableRow>
+    <>
+      <TableRow role="row">
+        <Img
+          src={image || "/default-cabin.jpg"}
+          alt={name || "Cabin"}
+          onError={(e) => {
+            e.target.src = "/default-cabin.jpg";
+          }}
+        />
+        <Cabin>{name || "Unknown Cabin"}</Cabin>
+        <div>
+          Fit up to <strong>{maxCapacity || 0}</strong> guests
+        </div>
+        <Price>{formatCurrency(regularPrice || 0)}</Price>
+        <Discount>{discount ? formatCurrency(discount) : "—"}</Discount>
+        <ButtonGroup>
+          <EditButton onClick={handleEdit}>Edit</EditButton>
+          <DeleteButton onClick={handleDelete} disabled={isDeleting}>
+            {isDeleting ? "Deleting..." : "Delete"}
+          </DeleteButton>
+        </ButtonGroup>
+      </TableRow>
+      {showForm && (
+        <CreateCabinForm
+          cabinToEdit={cabin}
+          onCloseModal={() => setShowForm(false)}
+          onSuccess={() => setShowForm(false)}
+        />
+      )}
+    </>
   );
 }
 
