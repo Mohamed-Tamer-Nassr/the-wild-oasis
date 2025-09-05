@@ -10,7 +10,7 @@ const StyledTable = styled.div`
   overflow: hidden;
 `;
 
-const CommonRow = styled.header`
+const CommonRow = styled.div`
   display: grid;
   grid-template-columns: ${(props) => props.columns};
   column-gap: 2.4rem;
@@ -29,10 +29,6 @@ const StyledHeader = styled(CommonRow)`
   color: var(--color-grey-600);
 `;
 
-const StyledBody = styled.section`
-  margin: 0.4rem 0;
-`;
-
 const StyledRow = styled(CommonRow)`
   padding: 1.2rem 2.4rem;
 
@@ -41,12 +37,17 @@ const StyledRow = styled(CommonRow)`
   }
 `;
 
+const StyledBody = styled.section`
+  margin: 0.4rem 0;
+`;
+
 const Footer = styled.footer`
   background-color: var(--color-grey-50);
   display: flex;
   justify-content: center;
   padding: 1.2rem;
 
+  /* This will hide the footer when it contains no child elements. Possible thanks to the parent selector :has 🎉 */
   &:not(:has(*)) {
     display: none;
   }
@@ -61,7 +62,7 @@ const Empty = styled.p`
 
 const TableContext = createContext();
 
-function Table({ children, columns }) {
+function Table({ columns, children }) {
   return (
     <TableContext.Provider value={{ columns }}>
       <StyledTable role="table">{children}</StyledTable>
@@ -72,28 +73,29 @@ function Table({ children, columns }) {
 function Header({ children }) {
   const { columns } = useContext(TableContext);
   return (
-    <StyledHeader columns={columns} role="row">
+    <StyledHeader role="row" columns={columns} as="header">
       {children}
     </StyledHeader>
   );
 }
-
 function Row({ children }) {
   const { columns } = useContext(TableContext);
   return (
-    <StyledRow columns={columns} role="row">
+    <StyledRow role="row" columns={columns}>
       {children}
     </StyledRow>
   );
 }
 
 function Body({ data, render }) {
-  return <StyledBody>{data.map((item) => render(item))}</StyledBody>;
+  if (!data.length) return <Empty>No data to show at the moment</Empty>;
+
+  return <StyledBody>{data.map(render)}</StyledBody>;
 }
+
 Table.Header = Header;
-Table.Row = Row;
 Table.Body = Body;
+Table.Row = Row;
 Table.Footer = Footer;
-Table.Empty = Empty;
 
 export default Table;

@@ -58,6 +58,7 @@ function Modal({ children, onClose }) {
         <Button onClick={onClose}>
           <HiXMark />
         </Button>
+
         <div>{children}</div>
       </StyledModal>
     </Overlay>,
