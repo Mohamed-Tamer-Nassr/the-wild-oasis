@@ -1,39 +1,52 @@
 import { useState } from "react";
 import Button from "../../ui/Button";
 import Form from "../../ui/Form";
-import FormRow from "../../ui/FormRow";
+import FormRowVertical from "../../ui/FormRowVertical";
 import Input from "../../ui/Input";
+import { useLogin } from "./useLogin";
 
 function LoginForm() {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  const [email, setEmail] = useState("mohamed@example.com");
+  const [password, setPassword] = useState("password123");
+  const { login, isLoading } = useLogin();
 
-  function handleSubmit() {}
+  function handleSubmit(e) {
+    e.preventDefault();
+    if (!email || !password) {
+      alert("Please fill in both email and password");
+      return;
+    }
+    // No need for async/await here since login is a mutation
+    login({ email, password });
+  }
 
   return (
     <Form onSubmit={handleSubmit}>
-      <FormRow label="Email address" orientation="vertical">
+      <FormRowVertical label="Email address" orientation="vertical">
         <Input
           type="email"
           id="email"
-          // This makes this form better for password managers
           autoComplete="username"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
+          disabled={isLoading} // Disable during loading
         />
-      </FormRow>
-      <FormRow label="Password" orientation="vertical">
+      </FormRowVertical>
+      <FormRowVertical label="Password" orientation="vertical">
         <Input
           type="password"
           id="password"
           autoComplete="current-password"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
+          disabled={isLoading} // Disable during loading
         />
-      </FormRow>
-      <FormRow orientation="vertical">
-        <Button size="large">Login</Button>
-      </FormRow>
+      </FormRowVertical>
+      <FormRowVertical orientation="vertical">
+        <Button disabled={isLoading} size="large">
+          {isLoading ? "Logging in..." : "Login"}
+        </Button>
+      </FormRowVertical>
     </Form>
   );
 }
