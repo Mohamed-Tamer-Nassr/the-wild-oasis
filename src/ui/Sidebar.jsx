@@ -1,7 +1,7 @@
 import styled from "styled-components";
+import Uploader from "../data/Uploader";
 import Logo from "./Logo";
 import MainNav from "./MainNav";
-import Uploader from "../data/Uploader";
 
 const StyledSidebar = styled.aside`
   background-color: var(--color-grey-0);
@@ -11,6 +11,7 @@ const StyledSidebar = styled.aside`
   grid-row: 1 / -1;
   display: flex;
   flex-direction: column;
+  align-items: center;
   gap: 3.2rem;
 `;
 
