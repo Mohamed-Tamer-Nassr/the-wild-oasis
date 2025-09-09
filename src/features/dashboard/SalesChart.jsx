@@ -1,3 +1,4 @@
+import { eachDayOfInterval, format, isSameDay, subDays } from "date-fns";
 import {
   Area,
   AreaChart,
@@ -53,8 +54,25 @@ const OLDdata = [
   { label: "Feb 06", totalSales: 1450, extrasSales: 900 - 500 },
 ];
 
-function SalesChart() {
+function SalesChart({ bookings, numDays }) {
   const { isDarkMode } = useDarkMode();
+  const allDates = eachDayOfInterval({
+    start: subDays(new Date(), numDays - 1),
+    end: new Date(),
+  });
+
+  const date = allDates.map((date) => {
+    return {
+      label: format(date, "MMM dd"),
+      totalSales: bookings
+        .filter((booking) => isSameDay(date, new Date(booking.created_at)))
+        .reduce((acc, cur) => acc + cur.totalPrice, 0),
+      extrasSales: bookings
+        .filter((booking) => isSameDay(date, new Date(booking.created_at)))
+        .reduce((acc, cur) => acc + cur.extraPrice, 0),
+    };
+  });
+  console.log(date);
   const colors = isDarkMode
     ? {
         totalSales: { stroke: "#4f46e5", fill: "#4f46e5" },
@@ -70,9 +88,12 @@ function SalesChart() {
       };
   return (
     <StyledSalesChart>
-      <Heading as="h2">Sales</Heading>
+      <Heading as="h2">
+        Sales from {format(allDates.at(0), "MMM dd yyyy")}
+        &mdash; {format(allDates.at(-1), "MMM dd yyyy")}
+      </Heading>
       <ResponsiveContainer height={300} width="100%">
-        <AreaChart data={OLDdata}>
+        <AreaChart data={date}>
           <CartesianGrid strokeDasharray="4" />
           <YAxis
             unit="$"

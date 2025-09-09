@@ -1,4 +1,3 @@
-import { useDarkMode } from 'context/DarkModeContext';
 import {
   Cell,
   Legend,
@@ -6,202 +5,129 @@ import {
   PieChart,
   ResponsiveContainer,
   Tooltip,
-} from 'recharts';
-import styled from 'styled-components';
-import { box } from 'styles/styles';
-import Heading from 'ui/Heading';
+} from "recharts";
+import styled from "styled-components";
+import { useDarkMode } from "../../context/DarkModeContext";
+import Heading from "../../ui/Heading";
 
 const ChartBox = styled.div`
-  ${box}
+  /* Box */
+  background-color: var(--color-grey-0);
+  border: 1px solid var(--color-grey-100);
+  border-radius: var(--border-radius-md);
+
   padding: 2.4rem 3.2rem;
+  padding-right: 5rem;
 
   grid-column: 3 / span 2;
-
-  & .recharts-pie-label-text {
-    font-weight: 600;
-  }
-
-  /* A bit hack, but okay */
+  width: 45rem;
+  height: 35rem;
+  margin-top: 5rem;
   & > *:first-child {
     margin-bottom: 1.6rem;
   }
-`;
-/*
-const startDataLight = {
-  '1 nights': {
-    duration: '1 nights',
-    value: 0,
-    color: '#ef4444',
-  },
-  '2 nights': {
-    duration: '2 nights',
-    value: 0,
-    color: '#f97316',
-  },
-  '3 nights': {
-    duration: '3 nights',
-    value: 0,
-    color: '#eab308',
-  },
-  '4-5 nights': {
-    duration: '4-5 nights',
-    value: 0,
-    color: '#84cc16',
-  },
-  '6-7 nights': {
-    duration: '6-7 nights',
-    value: 0,
-    color: '#22c55e',
-  },
-  '8-14 nights': {
-    duration: '8-14 nights',
-    value: 0,
-    color: '#14b8a6',
-  },
-  '15-21 nights': {
-    duration: '15-21 nights',
-    value: 0,
-    color: '#3b82f6',
-  },
-  '21+ nights': {
-    duration: '21+ nights',
-    value: 0,
-    color: '#a855f7',
-  },
-};
 
-const startDataDark = {
-  '1 nights': {
-    duration: '1 nights',
-    value: 0,
-    color: '#b91c1c',
-  },
-  '2 nights': {
-    duration: '2 nights',
-    value: 0,
-    color: '#c2410c',
-  },
-  '3 nights': {
-    duration: '3 nights',
-    value: 0,
-    color: '#a16207',
-  },
-  '4-5 nights': {
-    duration: '4-5 nights',
-    value: 0,
-    color: '#4d7c0f',
-  },
-  '6-7 nights': {
-    duration: '6-7 nights',
-    value: 0,
-    color: '#15803d',
-  },
-  '8-14 nights': {
-    duration: '8-14 nights',
-    value: 0,
-    color: '#0f766e',
-  },
-  '15-21 nights': {
-    duration: '15-21 nights',
-    value: 0,
-    color: '#1d4ed8',
-  },
-  '21+ nights': {
-    duration: '21+ nights',
-    value: 0,
-    color: '#7e22ce',
-  },
-};
-*/
+  & .recharts-pie-label-text {
+    font-weight: 500;
+  }
+`;
 
 const startDataLight = [
   {
-    duration: '1 night',
+    duration: "1 night",
     value: 0,
-    color: '#ef4444',
+    color: "#ef4444",
   },
   {
-    duration: '2 nights',
+    duration: "2 nights",
     value: 0,
-    color: '#f97316',
+    color: "#f97316",
   },
   {
-    duration: '3 nights',
+    duration: "3 nights",
     value: 0,
-    color: '#eab308',
+    color: "#eab308",
   },
   {
-    duration: '4-5 nights',
+    duration: "4-5 nights",
     value: 0,
-    color: '#84cc16',
+    color: "#84cc16",
   },
   {
-    duration: '6-7 nights',
+    duration: "6-7 nights",
     value: 0,
-    color: '#22c55e',
+    color: "#22c55e",
   },
   {
-    duration: '8-14 nights',
+    duration: "8-14 nights",
     value: 0,
-    color: '#14b8a6',
+    color: "#14b8a6",
   },
   {
-    duration: '15-21 nights',
+    duration: "15-21 nights",
     value: 0,
-    color: '#3b82f6',
+    color: "#3b82f6",
   },
   {
-    duration: '21+ nights',
+    duration: "21+ nights",
     value: 0,
-    color: '#a855f7',
+    color: "#a855f7",
   },
 ];
 
 const startDataDark = [
   {
-    duration: '1 night',
+    duration: "1 night",
     value: 0,
-    color: '#b91c1c',
+    color: "#b91c1c",
   },
   {
-    duration: '2 nights',
+    duration: "2 nights",
     value: 0,
-    color: '#c2410c',
+    color: "#c2410c",
   },
   {
-    duration: '3 nights',
+    duration: "3 nights",
     value: 0,
-    color: '#a16207',
+    color: "#a16207",
   },
   {
-    duration: '4-5 nights',
+    duration: "4-5 nights",
     value: 0,
-    color: '#4d7c0f',
+    color: "#4d7c0f",
   },
   {
-    duration: '6-7 nights',
+    duration: "6-7 nights",
     value: 0,
-    color: '#15803d',
+    color: "#15803d",
   },
   {
-    duration: '8-14 nights',
+    duration: "8-14 nights",
     value: 0,
-    color: '#0f766e',
+    color: "#0f766e",
   },
   {
-    duration: '15-21 nights',
+    duration: "15-21 nights",
     value: 0,
-    color: '#1d4ed8',
+    color: "#1d4ed8",
   },
   {
-    duration: '21+ nights',
+    duration: "21+ nights",
     value: 0,
-    color: '#7e22ce',
+    color: "#7e22ce",
   },
 ];
 
 function prepareData(startData, stays) {
-  // A bit ugly code, but sometimes this is what it takes when working with real data 😅
+  console.log("📊 Debug Info:");
+  console.log("Raw stays data:", stays);
+  console.log("Number of stays:", stays?.length || 0);
+
+  // Check first few items structure
+  if (stays?.length > 0) {
+    console.log("First stay object:", stays[0]);
+    console.log("Available properties:", Object.keys(stays[0]));
+  }
 
   function incArrayValue(arr, field) {
     return arr.map((obj) =>
@@ -209,79 +135,40 @@ function prepareData(startData, stays) {
     );
   }
 
-  const data = stays
-    .reduce((arr, cur) => {
-      const num = cur.numNights;
-      if (num === 1) return incArrayValue(arr, '1 night');
-      if (num === 2) return incArrayValue(arr, '2 nights');
-      if (num === 3) return incArrayValue(arr, '3 nights');
-      if ([4, 5].includes(num)) return incArrayValue(arr, '4-5 nights');
-      if ([6, 7].includes(num)) return incArrayValue(arr, '6-7 nights');
-      if (num >= 8 && num <= 14) return incArrayValue(arr, '8-14 nights');
-      if (num >= 15 && num <= 21) return incArrayValue(arr, '15-21 nights');
-      if (num >= 21) return incArrayValue(arr, '21+ nights');
+  const data =
+    stays?.reduce((arr, cur) => {
+      // Try different possible property names for number of nights
+      const num =
+        cur.numNights ||
+        cur.numberOfNights ||
+        cur.nights ||
+        cur.duration ||
+        cur.stayDuration;
+
+      console.log(`Processing stay: numNights = ${num}`);
+
+      if (!num) {
+        console.warn("No numNights property found for:", cur);
+        return arr;
+      }
+
+      if (num === 1) return incArrayValue(arr, "1 night");
+      if (num === 2) return incArrayValue(arr, "2 nights");
+      if (num === 3) return incArrayValue(arr, "3 nights");
+      if ([4, 5].includes(num)) return incArrayValue(arr, "4-5 nights");
+      if ([6, 7].includes(num)) return incArrayValue(arr, "6-7 nights");
+      if (num >= 8 && num <= 14) return incArrayValue(arr, "8-14 nights");
+      if (num >= 15 && num < 21) return incArrayValue(arr, "15-21 nights");
+      if (num >= 21) return incArrayValue(arr, "21+ nights");
       return arr;
-    }, startData)
-    .filter((obj) => obj.value > 0);
+    }, structuredClone(startData)) || structuredClone(startData);
 
-  return data;
+  const filteredData = data.filter((obj) => obj.value > 0);
 
-  /*
-  const tempData = stays.reduce((obj, cur) => {
-    const num = cur.numNights;
-    console.log(num, obj);
-    // For 1, 2, or 3 nights, we have single category
-    if (num <= 3) {
-      obj[`${num} nights`] = {
-        ...obj[`${num} nights`],
-        value: obj[`${num} nights`].value + 1,
-      };
-      return obj;
-    }
-    if (num === 4 || num === 5) {
-      console.log(obj['4-5 nights']);
-      console.log(obj['4-5 nights'].value + 1);
+  console.log("Final processed data:", filteredData);
+  console.log("Total items with data:", filteredData.length);
 
-      obj['4-5 nights'] = {
-        ...obj['4-5 nights'],
-        value: obj['4-5 nights'].value + 1,
-      };
-      return obj;
-    }
-    if (num === 6 || num === 7) {
-      obj['6-7 nights'] = {
-        ...obj['6-7 nights'],
-        value: obj['6-7 nights'].value + 1,
-      };
-      return obj;
-    }
-    if (num >= 8 && num <= 14) {
-      obj['8-14 nights'] = {
-        ...obj['8-14 nights'],
-        value: obj['8-14 nights'].value + 1,
-      };
-      return obj;
-    }
-    if (num >= 15 && num <= 21) {
-      obj['15-21 nights'] = {
-        ...obj['15-21 nights'],
-        value: obj['15-21 nights'].value + 1,
-      };
-      return obj;
-    }
-    if (num >= 21) {
-      obj['21+ nights'] = {
-        ...obj['21+ nights'],
-        value: obj['21+ nights'].value + 1,
-      };
-      return obj;
-    }
-
-    return obj;
-  }, startData);
-
-  return Object.values(tempData).filter((obj) => obj.value > 0);
-  */
+  return filteredData;
 }
 
 function DurationChart({ confirmedStays }) {
@@ -289,42 +176,63 @@ function DurationChart({ confirmedStays }) {
   const startData = isDarkMode ? startDataDark : startDataLight;
   const data = prepareData(startData, confirmedStays);
 
+  // Debug output
+  console.log("🎯 Chart render info:");
+  console.log("confirmedStays:", confirmedStays);
+  console.log("Processed data for chart:", data);
+
+  // Show message if no data
+  if (!data || data.length === 0) {
+    return (
+      <ChartBox>
+        <Heading as="h2">Stay Duration Summary</Heading>
+        <div
+          style={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            height: "250px",
+            color: "var(--color-grey-500)",
+            fontSize: "1.6rem",
+          }}
+        >
+          No data available. Check console for debug information.
+        </div>
+      </ChartBox>
+    );
+  }
+
   return (
     <ChartBox>
-      <Heading type='h2'>Stay duration summary</Heading>
-      <ResponsiveContainer width='100%' height={240}>
+      <Heading as="h2">Stay Duration Summary</Heading>
+      <ResponsiveContainer width="100%" height={250}>
         <PieChart>
           <Pie
             data={data}
-            nameKey='duration'
-            dataKey='value'
-            cx='40%'
-            cy='50%'
+            nameKey="duration"
+            dataKey="value"
             innerRadius={85}
             outerRadius={110}
-            fill='#4f46e5'
-            paddingAngle={3}
-            startAngle={180}
-            endAngle={-180}
+            cx="52%"
+            cy="45%"
+            paddingAngle={1}
           >
-            {data.map((entry, i) => (
+            {data.map((entry) => (
               <Cell
-                key={entry.duration}
                 fill={entry.color}
                 stroke={entry.color}
+                key={entry.duration}
               />
             ))}
           </Pie>
           <Tooltip />
           <Legend
-            // verticalAlign='bottom'
-            // align='center'
-            verticalAlign='middle'
-            align='right'
-            width='30%'
-            layout='vertical'
+            verticalAlign="middle"
+            align="right"
+            layout="vertical"
+            wrapperStyle={{ paddingLeft: "30px" }}
             iconSize={15}
-            iconType='circle'
+            iconType="circle"
           />
         </PieChart>
       </ResponsiveContainer>

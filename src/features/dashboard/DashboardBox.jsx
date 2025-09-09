@@ -9,6 +9,7 @@ const DashboardBox = styled.div`
   padding: 3.2rem;
   display: flex;
   flex-direction: column;
+  margin-top: 15rem;
   gap: 2.4rem;
 `;
 
