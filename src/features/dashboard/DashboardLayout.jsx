@@ -1,5 +1,8 @@
 import styled from "styled-components";
+import { useCabins } from "../../features/cabins/useCabins";
 import Spinner from "../../ui/Spinner";
+import SalesChart from "./SalesChart";
+import Stats from "./Stats";
 import { useRecentBooking } from "./useRecentBookings";
 import { useRecentStays } from "./useRecentStays";
 const StyledDashboardLayout = styled.div`
@@ -17,15 +20,26 @@ We need to distinguish between two types of data here:
 
 function DashboardLayout() {
   const { isLoading: isLoading1, bookings } = useRecentBooking();
-  const { isLoading: isLoading2, stays, confirmedStays } = useRecentStays();
-  if (isLoading1 || isLoading2) return <Spinner />;
+  const {
+    isLoading: isLoading2,
+    stays,
+    confirmedStays,
+    numDays,
+  } = useRecentStays();
+  const { cabins, isLoading: isLoading3 } = useCabins();
+  if (isLoading1 || isLoading2 || isLoading3) return <Spinner />;
   console.log(bookings, stays, confirmedStays);
   return (
     <StyledDashboardLayout>
-      <div>statistics</div>
+      <Stats
+        bookings={bookings}
+        confirmedStays={confirmedStays}
+        numDays={numDays}
+        cabinsCount={cabins.length}
+      />
       <div>activity</div>
       <div>chart stay duration </div>
-      <div>chart sales</div>
+      <SalesChart />
     </StyledDashboardLayout>
   );
 }
