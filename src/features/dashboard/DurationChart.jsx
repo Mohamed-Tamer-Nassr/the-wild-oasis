@@ -20,7 +20,7 @@ const ChartBox = styled.div`
   padding-right: 5rem;
 
   grid-column: 3 / span 2;
-  width: 45rem;
+  /* width: 45rem; */
   height: 35rem;
   margin-top: 5rem;
   & > *:first-child {
@@ -119,15 +119,7 @@ const startDataDark = [
 ];
 
 function prepareData(startData, stays) {
-  console.log("📊 Debug Info:");
-  console.log("Raw stays data:", stays);
-  console.log("Number of stays:", stays?.length || 0);
-
-  // Check first few items structure
-  if (stays?.length > 0) {
-    console.log("First stay object:", stays[0]);
-    console.log("Available properties:", Object.keys(stays[0]));
-  }
+  // A bit ugly code, but sometimes this is what it takes when working with real data 😅
 
   function incArrayValue(arr, field) {
     return arr.map((obj) =>
@@ -135,40 +127,22 @@ function prepareData(startData, stays) {
     );
   }
 
-  const data =
-    stays?.reduce((arr, cur) => {
-      // Try different possible property names for number of nights
-      const num =
-        cur.numNights ||
-        cur.numberOfNights ||
-        cur.nights ||
-        cur.duration ||
-        cur.stayDuration;
-
-      console.log(`Processing stay: numNights = ${num}`);
-
-      if (!num) {
-        console.warn("No numNights property found for:", cur);
-        return arr;
-      }
-
+  const data = stays
+    .reduce((arr, cur) => {
+      const num = cur.numNights;
       if (num === 1) return incArrayValue(arr, "1 night");
       if (num === 2) return incArrayValue(arr, "2 nights");
       if (num === 3) return incArrayValue(arr, "3 nights");
       if ([4, 5].includes(num)) return incArrayValue(arr, "4-5 nights");
       if ([6, 7].includes(num)) return incArrayValue(arr, "6-7 nights");
       if (num >= 8 && num <= 14) return incArrayValue(arr, "8-14 nights");
-      if (num >= 15 && num < 21) return incArrayValue(arr, "15-21 nights");
+      if (num >= 15 && num <= 21) return incArrayValue(arr, "15-21 nights");
       if (num >= 21) return incArrayValue(arr, "21+ nights");
       return arr;
-    }, structuredClone(startData)) || structuredClone(startData);
+    }, startData)
+    .filter((obj) => obj.value > 0);
 
-  const filteredData = data.filter((obj) => obj.value > 0);
-
-  console.log("Final processed data:", filteredData);
-  console.log("Total items with data:", filteredData.length);
-
-  return filteredData;
+  return data;
 }
 
 function DurationChart({ confirmedStays }) {
