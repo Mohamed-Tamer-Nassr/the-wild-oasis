@@ -20,7 +20,7 @@ const Guest = styled.div`
   font-weight: 500;
 `;
 function TodayItem({ activity }) {
-  const { id, status, guests, numNights } = activity;
+  const { status, guests, numNights } = activity;
   return (
     <StyledTodayItem>
       {status === "unconfirmed" && <Tag type="green">Arriving</Tag>}
